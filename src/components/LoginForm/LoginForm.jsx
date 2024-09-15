@@ -80,8 +80,17 @@ export default function LoginForm() {
 
     const handleSubmit = e => {
         e.preventDefault();
-        if (!setPasswordError && !setEmailError) {
+
+        // Check if both fields are empty
+        if (!email || !password) {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        // Check if there are no validation errors
+        if (!emailError && !passwordError) {
             alert("Form is valid! Submitting the form...");
+            // Perform further actions like submitting the form data to the server
         } else {
             alert("Form is invalid! Please check the fields...");
         }
@@ -98,7 +107,7 @@ export default function LoginForm() {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <form className={classes.form} onChange={handleSubmit} noValidate>
+                <form className={classes.form} onSubmit={handleSubmit} noValidate>
                     <TextField
                         variant="outlined"
                         margin="normal"

@@ -12,6 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import axios from "axios";
 
 
 
@@ -52,8 +53,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function LoginForm() {
-    const [email,setEmail] = useState('');
-    const [password,setPassword] = useState('');
+    const [Email,setEmail] = useState('');
+    const [Password,setPassword] = useState('');
     const [emailError,setEmailError] = useState(false);
     const [passwordError,setPasswordError] = useState(false);
 
@@ -78,11 +79,11 @@ export default function LoginForm() {
         }
     }
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault();
 
         // Check if both fields are empty
-        if (!email || !password) {
+        if (!Email || !Password) {
             alert("Please fill in all fields");
             return;
         }
@@ -91,6 +92,26 @@ export default function LoginForm() {
         if (!emailError && !passwordError) {
             alert("Form is valid! Submitting the form...");
             // Perform further actions like submitting the form data to the server
+            try {
+                const response = await axios.post('http://localhost:8080/login', {
+                    Email,
+                    Password,
+                });
+                console.log(Email, Password);
+                // Assuming response contains JWT token
+                const {token} = response.data;
+
+                // Store JWT in localStorage (or session storage)
+                localStorage.setItem('token', token);
+
+                alert("Login successful! Redirecting...");
+
+                // Redirect user to the dashboard or another page
+                // window.location.href = "/dashboard";
+
+            } catch (error) {
+                alert("Login failed! Please check your credentials.");
+            }
         } else {
             alert("Form is invalid! Please check the fields...");
         }
@@ -114,7 +135,7 @@ export default function LoginForm() {
                         required
                         fullWidth
                         id="email"
-                        value={email}
+                        value={Email}
                         label="Email Address"
                         onChange={handleEmailValidation}
                         error={emailError}
@@ -128,7 +149,7 @@ export default function LoginForm() {
                         margin="normal"
                         required
                         fullWidth
-                        value={password}
+                        value={Password}
                         onChange={handlePasswordValidation}
                         error={passwordError}
                         helperText={passwordError ? "Please enter a password from 6 to 16 characters including at least 1 number and at least on special character" : ""}

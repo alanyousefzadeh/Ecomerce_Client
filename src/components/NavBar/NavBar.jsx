@@ -1,4 +1,5 @@
 import React from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
 import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 
 const NavBar = () => {
@@ -6,12 +7,18 @@ const NavBar = () => {
         <div>
             <Navbar expand="lg" className="bg-body-tertiary">
                 <Container>
-                    <Navbar.Brand href="#home">Landing Page</Navbar.Brand>
+                    <LinkContainer to="/">
+                    <Navbar.Brand>Landing Page</Navbar.Brand>
+                    </LinkContainer>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="#home">Home</Nav.Link>
-                            <Nav.Link href="#link">Link</Nav.Link>
+                            <LinkContainer to="/home">
+                            <Nav.Link>Home</Nav.Link>
+                            </LinkContainer>
+                            <LinkContainer to="/login">
+                            <Nav.Link>Login</Nav.Link>
+                            </LinkContainer>
                             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                                 <NavDropdown.Item href="#action/3.2">

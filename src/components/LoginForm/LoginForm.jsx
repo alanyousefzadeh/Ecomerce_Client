@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import AuthForm from '../AuthForm/AuthForm';
 import { Container, CssBaseline, Avatar, Box } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from "axios";
 //import Copyright from './Copyright';
 
 export default function LoginForm() {
     const [values, setValues] = useState({ email: '', password: '' });
     const [errors, setErrors] = useState({ email: '', password: '' });
+    const navigate = useNavigate(); // Initialize useNavigate for redirection
 
     const fields = [
         {
@@ -64,14 +66,16 @@ export default function LoginForm() {
                     Email: values.email,
                     Password: values.password,
                 });
-                console.log(values.email, values.password);
+                console.log(response.data);
                 // Assuming response contains JWT token
-                const {token} = response.data;
+                const {token,user} = response.data;
 
                 // Store JWT in localStorage (or session storage)
                 localStorage.setItem('token', token);
 
                 alert("Login successful! Redirecting...");
+
+                navigate('/user-details', { state: { user } });
 
                 // Redirect user to the dashboard or another page
                 // window.location.href = "/dashboard";

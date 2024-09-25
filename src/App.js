@@ -5,6 +5,7 @@ import NavBar from "./components/NavBar/NavBar";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import LandingPage from "./LandingPage/LandingPage";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import RegisterForm from "./components/Register/Register";
 
 
 
@@ -16,9 +17,9 @@ function App() {
             <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/home" element={<LandingPage />} />
-                <Route path="/login" element={<LoginForm />} />
+                <Route path="/login" element={<LoginForm/>} />
+                <Route path="/register" element={<RegisterForm/>} />
             </Routes>
-        <LandingPage/>
         </Router>
     </div>
   );

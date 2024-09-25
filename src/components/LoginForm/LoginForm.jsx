@@ -1,103 +1,70 @@
-import React, {useState} from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
+import React, { useState } from 'react';
+import AuthForm from '../AuthForm/AuthForm';
+import { Container, CssBaseline, Avatar, Box } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import axios from "axios";
-
-
-
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
-
-
-const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(1),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-}));
+//import Copyright from './Copyright';
 
 export default function LoginForm() {
-    const [Email,setEmail] = useState('');
-    const [Password,setPassword] = useState('');
-    const [emailError,setEmailError] = useState(false);
-    const [passwordError,setPasswordError] = useState(false);
+    const [values, setValues] = useState({ email: '', password: '' });
+    const [errors, setErrors] = useState({ email: '', password: '' });
 
-
-    const handleEmailValidation = e => {
-        const isValidEmail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-        setEmail(e.target.value);
-        if(e.target.value.match(isValidEmail)) {
-            setEmailError(false);
-        }else{
-            setEmailError(true);
+    const fields = [
+        {
+            name: 'email',
+            label: 'Email Address',
+            type: 'email',
+            helperText: 'Please enter a valid email',
+            autoComplete: 'email',
+            autoFocus: true,
+        },
+        {
+            name: 'password',
+            label: 'Password',
+            type: 'password',
+            helperText: 'Password must be at least 6 characters long',
+            autoComplete: 'current-password',
         }
-    }
+    ];
 
-    const handlePasswordValidation = e => {
-        const isValidPassword = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-        setPassword(e.target.value);
-        if (e.target.value.match(isValidPassword)) {
-            setPasswordError(false);
-        } else {
-            setPasswordError(true);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setValues({ ...values, [name]: value });
+        setErrors({ ...errors, [name]: validateField(name, value) });
+    };
+
+    const validateField = (name, value) => {
+        switch (name) {
+            case 'email':
+                return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value)
+                    ? ''
+                    : 'Please enter a valid email';
+            case 'password':
+                return /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/.test(value) ? '' : 'Password must be at least 6 characters long with at least one number and one special character';
+            default:
+                return '';
         }
-    }
+    };
 
-    const handleSubmit = async e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Check if both fields are empty
-        if (!Email || !Password) {
-            alert("Please fill in all fields");
-            return;
+        // Validate all fields before submitting
+        const newErrors = {};
+        for (const field of fields) {
+            newErrors[field.name] = validateField(field.name, values[field.name]);
         }
+        setErrors(newErrors);
 
         // Check if there are no validation errors
-        if (!emailError && !passwordError) {
-            alert("Form is valid! Submitting the form...");
-            // Perform further actions like submitting the form data to the server
+        if (Object.values(newErrors).every(error => error === '')) {
+            alert("Form is valid! Submitting...");
             try {
                 const response = await axios.post('http://localhost:8080/login', {
-                    Email,
-                    Password,
+                    Email: values.email,
+                    Password: values.password,
                 });
-                console.log(Email, Password);
+                console.log(values.email, values.password);
                 // Assuming response contains JWT token
                 const {token} = response.data;
 
@@ -112,82 +79,30 @@ export default function LoginForm() {
             } catch (error) {
                 alert("Login failed! Please check your credentials.");
             }
+
         } else {
-            alert("Form is invalid! Please check the fields...");
+            alert("Form is invalid! Please fix the errors.");
         }
     };
-    const classes = useStyles();
 
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
+            <div>
+                <Avatar>
                     <LockOutlinedIcon />
                 </Avatar>
-                <Typography component="h1" variant="h5">
-                    Sign in
-                </Typography>
-                <form className={classes.form} onSubmit={handleSubmit} noValidate>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        value={Email}
-                        label="Email Address"
-                        onChange={handleEmailValidation}
-                        error={emailError}
-                        name="email"
-                        helperText={emailError ? "Please enter valid email" : ""}
-                        autoComplete="email"
-                        autoFocus
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        value={Password}
-                        onChange={handlePasswordValidation}
-                        error={passwordError}
-                        helperText={passwordError ? "Please enter a password from 6 to 16 characters including at least 1 number and at least on special character" : ""}
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                    />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                    >
-                        Sign In
-                    </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="#" variant="body2">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </form>
+                <AuthForm
+                    formType="login"
+                    fields={fields}
+                    handleSubmit={handleSubmit}
+                    handleChange={handleChange}
+                    values={values}
+                    errors={errors}
+                />
             </div>
             <Box mt={8}>
-                <Copyright />
+                {/*<Copyright />*/}
             </Box>
         </Container>
     );

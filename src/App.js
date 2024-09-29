@@ -6,7 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import LandingPage from "./components/LandingPage/LandingPage";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RegisterForm from "./components/Register/Register";
-import UserDetails from "./components/UserDetailes";
+import UserDetails from "./components/UserDetailes/UserDetailes";
+import ChangeEmail from "./components/ChangeEmail/ChangeEmail";
 
 
 
@@ -21,6 +22,7 @@ function App() {
                 <Route path="/login" element={<LoginForm/>} />
                 <Route path="/register" element={<RegisterForm/>} />
                 <Route path="/user-details" element={<UserDetails/>}/>
+                <Route path={'/change-email/:token'} element={<ChangeEmail/>}/>
             </Routes>
         </Router>
     </div>

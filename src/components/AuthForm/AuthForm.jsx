@@ -19,7 +19,7 @@ export default function AuthForm({ formType, fields, handleSubmit, handleChange,
                     type={field.type}
                     value={values[field.name]}
                     onChange={handleChange}
-                    error={errors[field.name]}
+                    error={errors[Boolean(field.name)]}
                     helperText={errors[field.name] ? field.helperText : ''}
                     autoComplete={field.autoComplete}
                     autoFocus={field.autoFocus}
@@ -41,19 +41,19 @@ export default function AuthForm({ formType, fields, handleSubmit, handleChange,
                 {formType === 'login' ? (
                     <>
                         <Grid item xs>
-                            <Button href="#" variant="body2">
+                            <Button href="#" variant="contained">
                                 Forgot password?
                             </Button>
                         </Grid>
                         <Grid item>
-                            <Button href="/register" variant="body2">
+                            <Button href="/register" variant="contained">
                                 {"Don't have an account? Register"}
                             </Button>
                         </Grid>
                     </>
                 ) : (
                     <Grid item>
-                        <Button href="/login" variant="body2">
+                        <Button href="/login" variant="contained">
                             {"Already have an account? Sign in"}
                         </Button>
                     </Grid>
